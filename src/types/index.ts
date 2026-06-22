@@ -1,4 +1,4 @@
-export type Priority='Baixa'|'Média'|'Alta';
+export type Priority='Baixa'|'Média'|'Alta'|'Urgente';
 export type Category={id:string;name:string;color:string;icon:string;custom:boolean};
 export type Draft={id:string;title?:string;content:string;createdAt:string;updatedAt:string};
 export type Activity={id:string;title:string;description:string;categoryId:string;date:string;start:string;end:string;priority:Priority;important:boolean;completed:boolean;updatedAt:string};
