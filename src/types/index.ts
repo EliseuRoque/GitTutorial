@@ -1,9 +1,6 @@
-export type Status='pendente'|'em andamento'|'concluída'|'cancelada';
-export type Category={id:string;name:string;color:string;icon:string};
-export type Draft={id:string;title:string;description:string;categoryId?:string;archived:boolean;createdAt:string};
-export type Activity={id:string;title:string;description:string;categoryId:string;date:string;start:string;end:string;location?:string;notes?:string;status:Status;important:boolean;projectId?:string;updatedAt:string};
-export type ReadingLog={id:string;book:string;author:string;category:string;startPage:number;endPage:number;date:string;minutes:number};
-export type Project={id:string;name:string;type:'Pesquisa'|'Artigo'|'Livro'|'Disciplina'|'Evento'|'Orientação';status:'Planejamento'|'Em andamento'|'Concluído'};
-export type Goal={id:string;area:string;target:number;unit:'horas'|'páginas'|'sessões';period:'semanal'|'mensal'};
-export type Alert={id:string;message:string;activityId?:string;createdAt:string;read:boolean};
+export type Priority='Baixa'|'Média'|'Alta';
+export type Category={id:string;name:string;color:string;icon:string;custom:boolean};
+export type Draft={id:string;title?:string;content:string;createdAt:string;updatedAt:string};
+export type Activity={id:string;title:string;description:string;categoryId:string;date:string;start:string;end:string;priority:Priority;important:boolean;completed:boolean;updatedAt:string};
 export type Settings={slotMinutes:15|30|60;theme:'light'|'dark';localBackups:boolean};
+export type Alert={id:string;message:string;activityId?:string;createdAt:string;read:boolean};
