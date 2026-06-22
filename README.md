@@ -1,80 +1,55 @@
-# Planner 360°
+# Planner 360° Local
 
-PWA mobile-first em React + TypeScript para planejamento pessoal com dashboard, agenda semanal, rascunhos arrastáveis, categorias, metas, leituras, projetos acadêmicos, relatórios, exportação CSV/XLSX, armazenamento offline em IndexedDB, Supabase Auth/SQL e integrações Google Calendar/Sheets.
+PWA mobile-first em React + TypeScript para planejamento pessoal com dashboard, agenda semanal, rascunhos arrastáveis, categorias, metas, leituras, projetos acadêmicos, relatórios e exportação CSV/XLSX.
+
+## Privacidade e armazenamento
+
+- Não usa Supabase, Firebase, autenticação, APIs externas, banco de dados remoto ou integrações online.
+- Todos os dados são armazenados localmente no navegador.
+- O estado principal é persistido no armazenamento local do navegador com Zustand Persist.
+- O projeto mantém utilitários de IndexedDB (`idb`) apenas para armazenamento offline/local no próprio navegador.
+- Para backup ou migração, use as exportações CSV/XLSX disponíveis na aplicação.
 
 ## Stack
 
-- React, TypeScript, Vite, Tailwind CSS e componentes no estilo shadcn/ui.
-- React Router, Zustand, IndexedDB (`idb`), Supabase, FullCalendar, dnd-kit, Recharts, Vite PWA Plugin, Google Calendar API e Google Sheets API.
+- React, TypeScript, Vite e React Router.
+- Zustand para estado e persistência local.
+- IndexedDB local via `idb`.
+- FullCalendar, dnd-kit, Recharts, Vite PWA Plugin e XLSX.
+- Tailwind CSS para estilos.
 
-## Rodando localmente
+## Como rodar
 
 ```bash
 npm install
 npm run dev
 ```
 
-Build de produção:
+## Build
 
 ```bash
 npm run build
 ```
 
-## Variáveis de ambiente
-
-Crie `.env`:
-
-```env
-VITE_SUPABASE_URL=https://seu-projeto.supabase.co
-VITE_SUPABASE_ANON_KEY=sua-chave-anon
-```
-
-Configure no Google Cloud os escopos OAuth:
-
-- `https://www.googleapis.com/auth/calendar`
-- `https://www.googleapis.com/auth/spreadsheets`
-
-## Banco Supabase
-
-Execute `src/database/supabase.sql` no SQL Editor do Supabase. O script cria users, categories, activities, drafts, reading_logs, projects, goals, alerts, settings e calendar_sync com RLS por usuário.
-
 ## Funcionalidades
 
-- Dashboard com horas por área, indicadores, próximas atividades e alertas de importantes atrasadas.
-- CRUD de categorias com nome, cor e ícone.
-- Rascunho para ideias, arquivamento e conversão em atividade.
-- Agenda semanal FullCalendar de segunda a domingo, com intervalos de 15/30/60 minutos.
-- Atividades com status, importância, local, observações e vínculo a projetos.
-- Rotina de alerta para atividades importantes não concluídas por 7 dias, com notificação PWA.
-- Semanas ilimitadas pela navegação nativa do calendário.
-- Controle de leituras com páginas lidas, total acumulado, média semanal e gráfico.
-- Projetos acadêmicos com tipos e status.
-- Metas com barra de progresso.
-- Relatórios em Recharts e exportação CSV/XLSX.
-- Serviços para Google Calendar, Google Sheets, Supabase e IndexedDB.
-- Tema claro/escuro persistido.
-
-## Implantação Hostinger
-
-1. Rode `npm install` e `npm run build`.
-2. Envie o conteúdo de `dist/` para `public_html` no Hostinger File Manager ou via FTP.
-3. Configure as variáveis `VITE_*` no pipeline de build. Em hospedagem estática simples, faça o build local com `.env.production` antes do upload.
-4. Aponte o domínio para a pasta publicada e habilite HTTPS.
-5. Para rotas SPA, configure fallback para `index.html`.
-6. Teste instalação PWA no Android/iOS/Windows/Mac pelo navegador.
+- Dashboard com totais por categoria, pendências, concluídas e próximos compromissos.
+- Agenda semanal e mensal com criação rápida de atividades.
+- Rascunhos arrastáveis para transformar ideias em atividades.
+- Categorias editáveis e metas pessoais.
+- Controle de leituras com acumulado e gráfico.
+- Projetos acadêmicos por tipo e status.
+- Relatórios com filtros, gráficos e exportação CSV/XLSX.
+- Alertas locais para atividades importantes pendentes.
 
 ## Estrutura
 
 ```text
-src/components   UI e layout
-src/pages        telas principais
-src/hooks        hooks customizados
-src/services     Supabase e IndexedDB
-src/store        Zustand
-src/types        tipos globais
-src/utils        datas, exportação e estilos
-src/database     SQL Supabase
-src/pwa          espaço para recursos PWA extras
-src/integrations Google APIs
-src/assets       assets da aplicação
+src/components   Componentes de layout e UI
+src/pages        Telas principais
+src/store        Estado global persistido localmente
+src/services     Utilitários de armazenamento local/IndexedDB
+src/utils        Datas, exportação e estilos
+src/types        Tipos TypeScript
+public           Ícones da PWA
 ```
