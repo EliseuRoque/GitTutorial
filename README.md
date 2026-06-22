@@ -4,7 +4,7 @@ PWA mobile-first em React + TypeScript para planejamento pessoal offline. Organi
 
 ## Recursos
 
-- Dashboard com total de atividades, concluídas, pendentes, importantes atrasadas, próximas atividades e gráfico de horas por categoria.
+- Painel com total de atividades, concluídas, pendentes, urgentes, próximas atividades e gráfico de horas por categoria.
 - Agenda diária, semanal e mensal com criação rápida pelo botão `+` ou clique em horários/calendário.
 - Cadastro completo de atividades: título, descrição, categoria, data, horário inicial/final, prioridade, importante e concluída.
 - Área dedicada para atividades prioritárias, urgentes e pendências críticas.
