@@ -4,3 +4,4 @@
 .fc .fc-event-main{padding:0.25rem;white-space:normal;overflow:visible}
 .fc .fc-event-title,.fc .fc-event-time{white-space:normal;overflow:visible;font-weight:700;line-height:1.25}
 .fc .fc-daygrid-event{border-radius:0.75rem;padding:0.15rem 0.35rem;white-space:normal}
+.fc .fc-toolbar-title{font-size:1.25rem;font-weight:900}.fc .fc-timegrid-slot{height:2.9rem}.fc .fc-timegrid-event,.fc .fc-daygrid-event{margin:2px 4px!important;border-width:3px!important;box-shadow:0 10px 22px rgb(15 23 42 / 16%);font-size:.82rem}.fc .fc-event-main{padding:.35rem .45rem}.fc .fc-event-title,.fc .fc-event-time{font-weight:800;letter-spacing:.01em}.fc .fc-daygrid-day-frame{padding:3px}.fc .fc-col-header-cell{padding:.45rem 0;font-weight:900}@media (max-width:768px){.fc .fc-toolbar{align-items:flex-start;flex-direction:column;gap:.5rem}.fc .fc-timegrid-slot{height:2.4rem}}
