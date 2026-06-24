@@ -9,8 +9,9 @@ import { Card } from '../components/ui/Card';
 import { Input, Textarea } from '../components/ui/Input';
 import { Activity, Category, Priority } from '../types';
 import { usePlanner } from '../store/plannerStore';
-import { daysSince, today } from '../utils/date';
+import { today } from '../utils/date';
 import { priorities, PriorityBadge, PriorityLegend, sortByPriority } from '../utils/priority';
+import { activityStatus, activityStatusLegend, ActivityStatusBadge } from '../utils/activityStatus';
 
 
 const hexToRgba = (hex: string, alpha: number) => {
@@ -32,14 +33,6 @@ const readableTextColor = (hex: string) => {
   return luminance > 0.62 ? '#0f172a' : '#fff';
 };
 
-const temporalStatus = (a: Activity) => {
-  const daysUntil = Math.ceil((new Date(`${a.date}T00:00`).getTime() - new Date(`${today()}T00:00`).getTime()) / 86400000);
-  if (a.completed) return { label: 'Concluída', icon: '✓', className: 'border-solid', eventClass: 'agenda-status-solid' };
-  if (a.important && daysSince(a.date) > 7) return { label: 'Importante vencida há +7 dias', icon: '⏰', className: 'border-dashed', eventClass: 'agenda-status-dashed' };
-  if (daysUntil <= 2 && daysUntil >= 0) return { label: 'Vence em até 2 dias', icon: '◔', className: 'border-dotted', eventClass: 'agenda-status-dotted' };
-  return { label: 'Dentro do prazo', icon: '•', className: 'border-solid', eventClass: 'agenda-status-solid' };
-};
-
 function CategoryLegend({ categories }: { categories: Category[] }) {
   return (
     <div className="rounded-xl border bg-background p-3 text-sm" aria-label="Legenda de categorias">
@@ -57,12 +50,7 @@ function CategoryLegend({ categories }: { categories: Category[] }) {
 }
 
 function TemporalLegend() {
-  const items = [
-    { label: 'Concluída', icon: '✓', className: 'border-solid' },
-    { label: 'Importante vencida há +7 dias', icon: '⏰', className: 'border-dashed' },
-    { label: 'Vence em até 2 dias', icon: '◔', className: 'border-dotted' },
-    { label: 'Dentro do prazo', icon: '•', className: 'border-solid' },
-  ];
+  const items = activityStatusLegend;
   return (
     <div className="rounded-xl border bg-background p-3 text-sm" aria-label="Legenda de status temporal">
       <div className="mb-2 font-semibold">Status temporal (ícones e estilo da borda)</div>
@@ -96,7 +84,7 @@ export default function Agenda() {
   const events = useMemo(() => s.activities.map(a => {
     const category = s.categories.find(c => c.id === a.categoryId);
     const categoryColor = category?.color || '#64748b';
-    const status = temporalStatus(a);
+    const status = activityStatus(a);
     return { id: a.id, title: `${status.icon} ${a.priority === 'Urgente' ? '⚠ ' : ''}${a.start} - ${a.end} · ${a.title}`, start: `${a.date}T${a.start}`, end: `${a.date}T${a.end}`, backgroundColor: categoryColor, borderColor: categoryColor, textColor: readableTextColor(categoryColor), classNames: [status.eventClass], extendedProps: { ...a, categoryName: category?.name || 'Sem categoria', statusLabel: status.label } };
   }), [s.activities, s.categories]);
   const open = (info?: DateClickArg) => { const d = info?.date; setEditing(blank(s.categories[0]?.id || '', d?.toISOString().slice(0, 10) || today(), d?.toTimeString().slice(0, 5) || '09:00')); };
@@ -105,6 +93,6 @@ export default function Agenda() {
     <div className="grid gap-3 lg:grid-cols-3"><CategoryLegend categories={s.categories} /><PriorityLegend /><TemporalLegend /></div>
     {editing && <Form value={editing} onCancel={() => setEditing(undefined)} onSave={(a) => { ('id' in a) ? s.updateActivity(a) : s.addActivity(a); setEditing(undefined); }} />}
     <Card className="overflow-x-auto"><div className="min-w-[720px]"><FullCalendar key={view} plugins={[timeGridPlugin, dayGridPlugin, interactionPlugin]} initialView={view} locale="pt-br" buttonText={{ today: 'Hoje', month: 'Mês', week: 'Semana', day: 'Dia' }} allDaySlot={false} slotDuration={`00:${s.settings.slotMinutes}:00`} height="auto" nowIndicator editable selectable eventOverlap={false} slotEventOverlap={false} eventMaxStack={6} dayMaxEvents={4} eventDisplay="block" dateClick={open} events={events} eventDidMount={info => { const a = info.event.extendedProps as Activity & { categoryName?: string; statusLabel?: string }; info.el.title = `${a.title}\n${a.date} · ${a.start} - ${a.end}\nCategoria: ${a.categoryName}\nPrioridade: ${a.priority}\nStatus temporal: ${a.statusLabel}`; }} eventClick={i => setEditing(s.activities.find(a => a.id === i.event.id))} eventDrop={i => { const a = s.activities.find(x => x.id === i.event.id); if (a && i.event.start && i.event.end) s.updateActivity({ ...a, date: i.event.start.toISOString().slice(0, 10), start: i.event.start.toTimeString().slice(0, 5), end: i.event.end.toTimeString().slice(0, 5) }); }} /></div></Card>
-    <div className="grid gap-2 md:grid-cols-2 xl:grid-cols-3">{sortByPriority(s.activities).map(a => { const category = s.categories.find(c => c.id === a.categoryId); const color = category?.color || '#64748b'; const status = temporalStatus(a); return <Card key={a.id} className={`border-l-8 ${status.className}`} style={{ borderLeftColor: color, backgroundColor: hexToRgba(color, 0.08) }}><div className="flex justify-between gap-2"><b>{status.icon} {a.priority === 'Urgente' ? '⚠ ' : ''}{a.title}</b><input type="checkbox" checked={a.completed} onChange={() => s.toggleActivity(a.id)} /></div><div className="mt-2 flex flex-wrap items-center gap-2 text-sm text-muted-foreground"><span>{a.date} · {a.start}-{a.end}</span><span>{category?.name || 'Sem categoria'}</span><PriorityBadge priority={a.priority} /><span className="rounded-full border px-2 py-1 text-xs font-semibold">{status.label}</span></div><div className="mt-2 flex gap-2"><Button onClick={() => setEditing(a)}>Editar</Button><Button className="bg-red-600" onClick={() => confirm('Excluir atividade?') && s.deleteActivity(a.id)}>Excluir</Button></div></Card>; })}</div>
+    <div className="grid gap-2 md:grid-cols-2 xl:grid-cols-3">{sortByPriority(s.activities).map(a => { const category = s.categories.find(c => c.id === a.categoryId); const color = category?.color || '#64748b'; const status = activityStatus(a); return <Card key={a.id} className={`border-l-8 ${status.className}`} style={{ borderLeftColor: color, backgroundColor: hexToRgba(color, 0.08) }}><div className="flex justify-between gap-2"><b>{status.icon} {a.priority === 'Urgente' ? '⚠ ' : ''}{a.title}</b><input type="checkbox" checked={a.completed} onChange={() => s.toggleActivity(a.id)} /></div><div className="mt-2 flex flex-wrap items-center gap-2 text-sm text-muted-foreground"><span>{a.date} · {a.start}-{a.end}</span><span>{category?.name || 'Sem categoria'}</span><PriorityBadge priority={a.priority} /><ActivityStatusBadge activity={a} /></div><div className="mt-2 flex gap-2"><Button onClick={() => setEditing(a)}>Editar</Button><Button className="bg-red-600" onClick={() => confirm('Excluir atividade?') && s.deleteActivity(a.id)}>Excluir</Button></div></Card>; })}</div>
   </div>;
 }

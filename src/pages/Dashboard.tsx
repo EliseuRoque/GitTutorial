@@ -6,6 +6,7 @@ import { PwaInstallButton } from '../components/PwaInstallButton';
 import { completed, pending, totals, urgent, upcoming, usePlanner } from '../store/plannerStore';
 import { hoursBetween } from '../utils/date';
 import { PriorityBadge, PriorityLegend } from '../utils/priority';
+import { ActivityStatusBadge } from '../utils/activityStatus';
 
 export default function Dashboard() {
   const s = usePlanner();
@@ -36,8 +37,8 @@ export default function Dashboard() {
       </Card>)}
     </div>
     <div className="grid gap-4 lg:grid-cols-2">
-      <Card><h3 className="font-bold">Próximas atividades</h3>{upcoming(s.activities).map(a => <p key={a.id} className="flex flex-wrap items-center gap-2 border-b py-2 last:border-0"><span>{a.date} {a.start} — {a.end} · {a.title}</span><PriorityBadge priority={a.priority} /></p>)}{!upcoming(s.activities).length && <p className="text-muted-foreground">Nenhuma atividade pendente.</p>}</Card>
-      <Card><div className="mb-2 flex items-center justify-between gap-2"><h3 className="font-bold text-[#DC2626]">Atividades Urgentes</h3><span className="rounded-full bg-[#DC2626] px-3 py-1 text-sm font-bold text-white">Urgentes: {urgentes.length}</span></div>{urgentes.map(a => <p key={a.id} className="flex items-center gap-2 border-b py-2 last:border-0"><PriorityBadge priority={a.priority} /><span>{a.date} — {a.title}</span></p>)}{!urgentes.length && <p className="text-muted-foreground">Nenhuma atividade urgente cadastrada.</p>}</Card>
+      <Card><h3 className="font-bold">Próximas atividades</h3>{upcoming(s.activities).map(a => <p key={a.id} className="flex flex-wrap items-center gap-2 border-b py-2 last:border-0"><span>{a.date} {a.start} — {a.end} · {a.title}</span><PriorityBadge priority={a.priority} /><ActivityStatusBadge activity={a} /></p>)}{!upcoming(s.activities).length && <p className="text-muted-foreground">Nenhuma atividade pendente.</p>}</Card>
+      <Card><div className="mb-2 flex items-center justify-between gap-2"><h3 className="font-bold text-[#DC2626]">Atividades Urgentes</h3><span className="rounded-full bg-[#DC2626] px-3 py-1 text-sm font-bold text-white">Urgentes: {urgentes.length}</span></div>{urgentes.map(a => <p key={a.id} className="flex items-center gap-2 border-b py-2 last:border-0"><PriorityBadge priority={a.priority} /><ActivityStatusBadge activity={a} /><span>{a.date} — {a.title}</span></p>)}{!urgentes.length && <p className="text-muted-foreground">Nenhuma atividade urgente cadastrada.</p>}</Card>
     </div>
     <Card className="h-[28rem]"><h3 className="font-bold">Horas por categoria</h3><ResponsiveContainer width="100%" height="90%"><BarChart data={data} margin={{ top: 20, right: 24, left: 0, bottom: 45 }}><XAxis dataKey="name" interval={0} angle={-18} textAnchor="end" height={70} /><YAxis /><Tooltip formatter={(v) => [`${Number(v).toFixed(1)} h`, 'Horas']} /><Legend /><Bar dataKey="hours" name="Horas planejadas" fill="#2563eb" radius={[8,8,0,0]} /></BarChart></ResponsiveContainer></Card>
   </div>;
