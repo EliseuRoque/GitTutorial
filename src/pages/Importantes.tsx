@@ -3,6 +3,7 @@ import { Button } from '../components/ui/Button';
 import { Card } from '../components/ui/Card';
 import { isOverdue, usePlanner } from '../store/plannerStore';
 import { PriorityBadge, PriorityLegend, sortByPriority } from '../utils/priority';
+import { ActivityStatusBadge } from '../utils/activityStatus';
 
 export default function Importantes() {
   const s = usePlanner();
@@ -15,7 +16,7 @@ export default function Importantes() {
         <div className="flex items-start justify-between gap-3">
           <div className="space-y-2">
             <b className="flex items-center gap-2">{(isOverdue(a) || a.priority === 'Urgente') && <AlertTriangle className="text-[#DC2626]" />}{a.title}</b>
-            <div className="flex flex-wrap items-center gap-2 text-sm text-muted-foreground"><span>{a.date} · {a.start}-{a.end}</span><PriorityBadge priority={a.priority} /></div>
+            <div className="flex flex-wrap items-center gap-2 text-sm text-muted-foreground"><span>{a.date} · {a.start}-{a.end}</span><PriorityBadge priority={a.priority} /><ActivityStatusBadge activity={a} /></div>
             <p>{a.description}</p>
           </div>
           <Button onClick={() => s.toggleActivity(a.id)}>{a.completed ? 'Reabrir' : 'Concluir'}</Button>
